@@ -44,21 +44,5 @@ def view_edit():
 def add_blog():
     return render_template("newpost.html", title = "Make a New Blog")
 
-
-
-
-
-""" @app.route('/delete-task', methods=['POST'])
-def delete_task():
-
-    task_id = int(request.form['task-id'])
-    task = Task.query.get(task_id)
-    task.completed = True
-    db.session.add(task)
-    db.session.commit()
-
-    return redirect('/') """
-
-
 if __name__ == '__main__':
     app.run()

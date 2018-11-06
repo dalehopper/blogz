@@ -4,15 +4,16 @@
     <form action = "/blog" id = "newpost" method='POST'>
         <label>
             Title For Your New Blog Entry:<br>
-            <input type="text" name='title' />
+            <input type="text" name='title' value = "{{blog_title}}"/>
         </label>
         <br>
         <br>
         <label>
             Your new Blog:<br>
-            <textarea rows="10", cols= "50", form = "newpost", name = 'body'></textarea>
+            <textarea rows="10", cols= "50", form = "newpost", name = 'body'>{{blog_body}}</textarea>
 
         </label>
+        <h1 class = error>{{error}}</h1>
         <br>
         <input type="submit" value='Add Entry' />
     </form>

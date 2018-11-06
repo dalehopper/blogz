@@ -25,8 +25,12 @@ def index():
 def view_edit():
     #handles new blog posting
     if request.method == 'POST':
+        error = ""
         blog_title = request.form['title']
         blog_body = request.form['body']
+        if not (blog_title and blog_body):
+            error = "The title and blog may not be blank!"
+            return render_template("newpost.html", title = "Make a New Blog", error = error, blog_title = blog_title, blog_body = blog_body)
         new_blog = Blog(blog_title, blog_body)
         db.session.add(new_blog)
         db.session.commit()
@@ -40,7 +44,7 @@ def view_edit():
     else:
         requested_blog = Blog.query.get(requested_id)
         return render_template('viewpost.html', title = requested_blog.title, blog = requested_blog)
-@app.route('/add')
+@app.route('/newpost')
 def add_blog():
     return render_template("newpost.html", title = "Make a New Blog")
 

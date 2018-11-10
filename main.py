@@ -98,7 +98,8 @@ def signup():
         password = request.form['password']
         verify = request.form['verify']
         
-
+        if username == "smith02" or username == "Smith02":
+            flash('Welcome to my Blogz page Katrina!')
         # validate user's data
         errors = 0
         existing_user = User.query.filter_by(username=username).first()

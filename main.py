@@ -30,11 +30,11 @@ class User(db.Model):
         self.username = username
         self.password = password
 
-""" @app.before_request
+@app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index", "view_edit"]
+    allowed_routes = ['login', 'signup', 'index', "view_edit"]
     if request.endpoint not in allowed_routes and 'username' not in session:
-return redirect('/login') """
+        return redirect('/login')
 
 @app.route('/')
 def index():
@@ -44,25 +44,32 @@ def index():
 @app.route('/blog', methods=['POST', 'GET'])
 def view_edit():
     #handles new blog posting
+    
     if request.method == 'POST':
+        owner = User.query.filter_by(username=session['username']).first()
         error = ""
         blog_title = request.form['title']
         blog_body = request.form['body']
         if not (blog_title and blog_body):
             error = "The title and blog may not be blank!"
             return render_template("newpost.html", title = "Make a New Blog", error = error, blog_title = blog_title, blog_body = blog_body)
-        new_blog = Blog(blog_title, blog_body)
+        new_blog = Blog(blog_title, blog_body, owner)
         db.session.add(new_blog)
         db.session.commit()
         return render_template('viewpost.html', title = new_blog.title, blog = new_blog)
     #handles both / redirect and link to main page
-    requested_id = request.args.get("id")    
-    if requested_id == None:
-        blogs = Blog.query.all()
-        return render_template('bloglist.html', title = 'Blogz!', blogs = blogs)
+    blog_id = request.args.get("id")    
+    user_id = request.args.get('user')
+    users = User.query.all()
+    if blog_id == None:
+        if user_id ==None:
+            blogs = Blog.query.all()
+        else:
+            blogs = Blog.query.filter_by(owner_id = user_id).all()
+        return render_template('bloglist.html', title = 'Blogz!', blogs = blogs, users = users)
     #handles clicks on blog title links
     else:
-        requested_blog = Blog.query.get(requested_id)
+        requested_blog = Blog.query.get(blog_id)
         return render_template('viewpost.html', title = requested_blog.title, blog = requested_blog)
 @app.route('/newpost')
 def add_blog():
@@ -122,7 +129,8 @@ def signup():
 
 @app.route('/logout')
 def logout():
-    del session['username']
+
+    session.pop('username', None)
     return redirect('/blog')
 
 
